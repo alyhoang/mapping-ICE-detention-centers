@@ -11,7 +11,7 @@ An automated pipeline that scrapes ICE's public detention statistics, formats an
 | Requirement | Details |
 |---|---|
 | Operating System | Windows, macOS, Linux |
-| Python | Version 3.11 or newer |
+| Python | Version 3.11 or 3.12 |
 | ArcGIS Online Account | Must have access to the web map URL and account username/password |
 | GitHub Account | Required for biweekly scheduling via GitHub Actions |
 
