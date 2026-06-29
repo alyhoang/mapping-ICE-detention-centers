@@ -1,0 +1,57 @@
+name: ICE Detention Data Pipeline
+
+on:
+  schedule:
+    # Runs every other Wednesday at 12:00 UTC.
+    - cron: '0 12 * * 3'
+  workflow_dispatch: {}   # lets you trigger a run manually from the Actions tab
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Biweekly gate
+        id: gate
+        run: |
+          # Anchor date: pick any Wednesday you want runs to land on.
+          # This makes the job a no-op on the "off" week of the fortnight.
+          anchor="2026-01-07"
+          days_since=$(( ( $(date -u +%s) - $(date -u -d "$anchor" +%s) ) / 86400 ))
+          week_index=$(( (days_since / 7) % 2 ))
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          elif [ "$week_index" -eq 0 ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run pipeline
+        if: steps.gate.outputs.run == 'true'
+        env:
+          AGOL_USERNAME:    ${{ secrets.AGOL_USERNAME }}
+          AGOL_PASSWORD:    ${{ secrets.AGOL_PASSWORD }}
+          AGOL_MAP_ITEM_ID: ${{ secrets.AGOL_MAP_ITEM_ID }}
+          AGOL_FOLDER:      ${{ secrets.AGOL_FOLDER }}
+        run: python ice_scraper.py --output-dir ./output
+
+      - name: Upload outputs as artifact
+        if: steps.gate.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ice-pipeline-output-${{ github.run_id }}
+          path: output/
+          retention-days: 30
