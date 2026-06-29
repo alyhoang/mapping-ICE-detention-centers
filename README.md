@@ -124,7 +124,7 @@ export AGOL_MAP_ITEM_ID='your_map_item_id'
 
 ```
 https://user.maps.arcgis.com/apps/mapviewer/index.html?webmap=adb4b9703f5642799c9075d839484980
-                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                                                       this is your AGOL_MAP_ITEM_ID
 ```
 
