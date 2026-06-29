@@ -44,10 +44,18 @@ MappingICE/
 2. Click the **Fork** button in the top-right corner
 3. Under "Owner", select your GitHub account, then click **Create fork**
 
-Now clone your fork to your computer by opening your terminal and running each line:
+Open the Terminal
+
+- **macOS**: press `Cmd + Space`, type `Terminal`, press Enter
+- **Windows**: press `Win + R`, type `cmd`, press Enter
+- **Linux**: open your terminal application
+
+Now clone your fork to your computer by opening your terminal and running each line one at a time:
 
 ```bash
 git clone https://github.com/<your-github-username>/mapping-ICE-detention-centers.git
+```
+```bash
 cd mapping-ICE-detention-centers
 ```
 
@@ -57,29 +65,18 @@ Replace `<your-github-username>` with your actual GitHub username.
 
 ### Step 2 — Install Python
 
-Go to [python.org/downloads](https://www.python.org/downloads/) and follow the instructions for your operating system (Windows, macOS, or Linux). Install newest version.
+Go to [python.org/downloads](https://www.python.org/downloads/) and follow the instructions for your operating system (Windows, macOS, or Linux). Install version 3.11 OR 3.12. Do not download the latest version (ArcGIS libraries are not yet supported)
 
-### Step 3 — Open the Terminal
 
-- **macOS**: press `Cmd + Space`, type `Terminal`, press Enter
-- **Windows**: press `Win + R`, type `cmd`, press Enter
-- **Linux**: open your terminal application
-
-### Step 4 — Navigate to the Project Folder
-
-If you opened a new terminal window after Step 1, navigate back into the project folder by typing:
-
-```bash
-cd mapping-ICE-detention-centers
-```
-
-### Step 5 — Create and Activate the Python Environment
+### Step 3 — Create and Activate the Python Environment
 
 ```bash
 python -m venv venv
+```
+Run one of the following depending on your operating system:
+```bash
 source venv/bin/activate        # run if macOS / Linux
 venv\Scripts\activate           # run if Windows
-
 ```
 
 If successful, you will see `(venv)` appear at the start of your command line:
@@ -88,7 +85,7 @@ If successful, you will see `(venv)` appear at the start of your command line:
 (venv) user@computer MappingICE %
 ```
 
-### Step 6 — Install Dependencies
+### Step 4 — Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -99,7 +96,7 @@ pip install -r requirements.txt
 >
 > **Note:** if `pip3` works but `pip` does not, use `python3` anywhere this guide says `python` for the rest of the steps.
 
-This installs the following packages:
+This installs the following packages: 
 
 ```
 pandas
@@ -115,7 +112,11 @@ The script needs to know which ArcGIS account to use and which map to publish to
 
 ```bash
 export AGOL_USERNAME='your_username'
+```
+```bash
 export AGOL_PASSWORD='your_password'
+```
+```bash
 export AGOL_MAP_ITEM_ID='your_map_item_id'
 ```
 
@@ -147,20 +148,6 @@ echo "AGOL_MAP_ITEM_ID: $AGOL_MAP_ITEM_ID"
 
 ```bash
 python ice_scraper.py
-```
-
-### Local only — runs everything except the ArcGIS publish step
-
-```bash
-python ice_scraper.py --dry-run
-```
-
-Use this to verify the scraping and geocoding are working without touching ArcGIS Online.
-
-### End-to-end test including ArcGIS publish
-
-```bash
-python ice_scraper.py --test-agol
 ```
 
 ---
@@ -209,7 +196,7 @@ Typical match rate for the 04/29/2026 update: ~165 / 203 facilities per run. The
 
 ## Automated Scheduling with GitHub Actions
 
-The pipeline runs automatically every two weeks via GitHub Actions without any manual intervention. ICE updates its data roughly every two weeks on a Wednesday; the scheduler is aligned to match.
+The pipeline runs automatically every two weeks via GitHub Actions without any manual intervention. 
 
 > You can also trigger a manual run anytime from the Actions tab in GitHub by clicking **Run workflow**. Manual runs always execute regardless of the biweekly schedule.
 
@@ -239,7 +226,7 @@ requirements.txt
 
 ### Step 2 — Add repository secrets
 
-Your ArcGIS credentials must be stored as encrypted GitHub secrets — never hardcode them in the script or commit them to the repo.
+Your ArcGIS credentials must be stored as encrypted GitHub secrets.
 
 1. Go to your forked repository: `https://github.com/<your-github-username>/mapping-ICE-detention-centers`
 2. Click **Settings** → **Secrets and variables** → **Actions**
@@ -285,18 +272,6 @@ Pick any Wednesday you want the pipeline to land on.
 - **Total Detainment** is average nightly population, not a point-in-time count
 - Numbers are rounded integers derived from ICE's published averages
 - ~38 facilities per run are ungeocoded and will not appear on the map (PO Box addresses, rural routes, or territory locations outside Census geocoder coverage)
-
----
-
-## Dependencies
-
-```
-pandas
-requests
-beautifulsoup4
-openpyxl
-arcgis==2.4.3
-```
 
 ---
 
