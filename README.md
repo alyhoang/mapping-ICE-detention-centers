@@ -34,9 +34,7 @@ MappingICE/
 
 ---
 
-## Setup & Installation
-
-### Step 1 — Fork and Clone the Repository
+## Fork the Repository
 
 **Forking** creates your own copy of this project on GitHub, which you can run and modify independently.
 
@@ -44,7 +42,62 @@ MappingICE/
 2. Click the **Fork** button in the top-right corner
 3. Under "Owner", select your GitHub account, then click **Create fork**
 
-Open the Terminal
+
+## Option A -- Automated Scheduling with GitHub Actions
+
+The pipeline runs automatically every two weeks via GitHub Actions without any manual intervention. 
+
+> You can also trigger a manual run anytime from the Actions tab in GitHub by clicking **Run workflow**. Manual runs always execute regardless of the biweekly schedule.
+
+### How the schedule works
+
+The workflow fires every Wednesday at 12:00 UTC but includes a **biweekly gate** — a small script that checks whether the current week is an "on" week based on an anchor date. On "off" weeks the job exits immediately without running the pipeline.
+
+### Step 1 — Add repository secrets
+
+Your ArcGIS credentials must be stored as encrypted GitHub secrets.
+
+1. Go to your forked repository: `https://github.com/<your-github-username>/mapping-ICE-detention-centers`
+2. Click **Settings** → **Secrets and variables** → **Actions**
+3. Click **New repository secret** and add each of the following one at a time:
+
+| Secret Name | Value |
+|---|---|
+| `AGOL_USERNAME` | Your ArcGIS Online username |
+| `AGOL_PASSWORD` | Your ArcGIS Online password |
+| `AGOL_MAP_ITEM_ID` | Web Map item ID from the AGOL URL |
+
+> Secrets can be updated anytime by clicking the secret name → **Update**. You can never view an existing secret value, only overwrite it.
+
+### Step 2 — Enable Actions
+
+1. Go to the **Actions** tab in your repository
+2. If prompted, click **I understand my workflows, go ahead and enable them**
+3. You should see **ICE Detention Data Pipeline** listed in the left sidebar
+
+### Step 3 — Test with a manual run
+
+Before waiting for the scheduled Wednesday, trigger a run manually to confirm everything works:
+
+1. Go to **Actions** → **ICE Detention Data Pipeline**
+2. Click **Run workflow** → **Run workflow**
+3. Watch the logs in real time — a green checkmark means success
+4. When complete, click the run → **Artifacts** to download the output files
+
+### Step 4 — Verify the biweekly anchor
+
+The anchor date in `scheduler.yml` controls which Wednesdays are active run weeks. It is currently set to `2026-01-07`. To change it, edit this line and push:
+
+```yaml
+anchor="2026-01-07"
+```
+
+Pick any Wednesday you want the pipeline to land on.
+
+
+## Option B -- Run Locally
+
+## Step 1 - Open the Terminal & Clone the fork
 
 - **macOS**: press `Cmd + Space`, type `Terminal`, press Enter
 - **Windows**: press `Win + R`, type `cmd`, press Enter
@@ -191,79 +244,6 @@ Facilities are geocoded using the [Census Bureau Batch Geocoder](https://geocodi
 - Facilities in US territories (Guam, CNMI, Puerto Rico) are not matched by the Census geocoder
 
 Typical match rate for the 04/29/2026 update: ~165 / 203 facilities per run. The remaining ~38 are ungeocoded due to the limitations above and will not appear on the map.
-
----
-
-## Automated Scheduling with GitHub Actions
-
-The pipeline runs automatically every two weeks via GitHub Actions without any manual intervention. 
-
-> You can also trigger a manual run anytime from the Actions tab in GitHub by clicking **Run workflow**. Manual runs always execute regardless of the biweekly schedule.
-
-### How the schedule works
-
-The workflow fires every Wednesday at 12:00 UTC but includes a **biweekly gate** — a small script that checks whether the current week is an "on" week based on an anchor date. On "off" weeks the job exits immediately without running the pipeline.
-
----
-
-## Scheduler Setup
-
-### Step 1 — Confirm your fork is on GitHub
-
-If you completed the Fork step in Setup, your repository is already on GitHub at:
-
-```
-https://github.com/<your-github-username>/mapping-ICE-detention-centers
-```
-
-It will already contain all required files:
-
-```
-ice_scraper.py
-requirements.txt
-.github/workflows/scheduler.yml
-```
-
-### Step 2 — Add repository secrets
-
-Your ArcGIS credentials must be stored as encrypted GitHub secrets.
-
-1. Go to your forked repository: `https://github.com/<your-github-username>/mapping-ICE-detention-centers`
-2. Click **Settings** → **Secrets and variables** → **Actions**
-3. Click **New repository secret** and add each of the following one at a time:
-
-| Secret Name | Value |
-|---|---|
-| `AGOL_USERNAME` | Your ArcGIS Online username |
-| `AGOL_PASSWORD` | Your ArcGIS Online password |
-| `AGOL_MAP_ITEM_ID` | Web Map item ID from the AGOL URL |
-
-> Secrets can be updated anytime by clicking the secret name → **Update**. You can never view an existing secret value, only overwrite it.
-
-### Step 3 — Enable Actions
-
-1. Go to the **Actions** tab in your repository
-2. If prompted, click **I understand my workflows, go ahead and enable them**
-3. You should see **ICE Detention Data Pipeline** listed in the left sidebar
-
-### Step 4 — Test with a manual run
-
-Before waiting for the scheduled Wednesday, trigger a run manually to confirm everything works:
-
-1. Go to **Actions** → **ICE Detention Data Pipeline**
-2. Click **Run workflow** → **Run workflow**
-3. Watch the logs in real time — a green checkmark means success
-4. When complete, click the run → **Artifacts** to download the output files
-
-### Step 5 — Verify the biweekly anchor
-
-The anchor date in `scheduler.yml` controls which Wednesdays are active run weeks. It is currently set to `2026-01-07`. To change it, edit this line and push:
-
-```yaml
-anchor="2026-01-07"
-```
-
-Pick any Wednesday you want the pipeline to land on.
 
 ---
 
