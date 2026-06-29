@@ -44,7 +44,7 @@ MappingICE/
 2. Click the **Fork** button in the top-right corner
 3. Under "Owner", select your GitHub account, then click **Create fork**
 
-Now clone your fork to your computer:
+Now clone your fork to your computer by opening your terminal and running each line:
 
 ```bash
 git clone https://github.com/<your-github-username>/mapping-ICE-detention-centers.git
@@ -77,7 +77,9 @@ cd mapping-ICE-detention-centers
 
 ```bash
 python -m venv venv
-source venv/bin/activate        # macOS / Linux
+source venv/bin/activate        # run if macOS / Linux
+venv\Scripts\activate           # run if Windows
+
 ```
 
 If successful, you will see `(venv)` appear at the start of your command line:
